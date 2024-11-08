@@ -1,5 +1,6 @@
 package com.dieguidev.crudjpa.entities;
 
+import com.dieguidev.crudjpa.validation.IsExistsDb;
 import com.dieguidev.crudjpa.validation.IsRequired;
 
 import jakarta.persistence.Entity;
@@ -8,7 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+// import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -20,7 +21,12 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "{NotEmpty.product.name}")
+    @IsRequired
+    @IsExistsDb
+    private String sku;
+
+    // @NotEmpty(message = "{NotEmpty.product.name}")
+    @IsRequired(message = "{IsRequired.product.name}")
     @Size(min = 3, max = 45)
     private String name;
 
@@ -64,4 +70,13 @@ public class Product {
         this.description = description;
     }
 
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    
 }
