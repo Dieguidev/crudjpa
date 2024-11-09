@@ -40,15 +40,15 @@ public class User {
             @UniqueConstraint(columnNames = { "user_id", "role_id" }) })
     private List<Role> roles;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private boolean enable;
-
+    
     @PrePersist
     public void prePersist() {
         this.enable = true;
     }
-
+    
     @Transient // Este campo no se mapea en la base de datos
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private boolean admin;
 
     public Long getId() {
