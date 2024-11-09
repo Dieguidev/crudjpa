@@ -36,6 +36,8 @@ public class User {
             @UniqueConstraint(columnNames = { "user_id", "role_id" }) })
     private List<Role> roles;
 
+    private boolean enable;
+
     @Transient // Este campo no se mapea en la base de datos
     private boolean admin;
 
@@ -79,4 +81,11 @@ public class User {
         this.admin = admin;
     }
 
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
 }
