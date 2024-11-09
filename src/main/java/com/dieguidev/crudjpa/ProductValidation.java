@@ -8,17 +8,19 @@ import org.springframework.validation.annotation.Validated;
 
 import com.dieguidev.crudjpa.entities.Product;
 
+import io.micrometer.common.lang.NonNull;
+
 @Component
 @Validated
 public class ProductValidation implements Validator {
 
     @Override
-    public boolean supports(Class<?> clazz) {
+    public boolean supports(@NonNull Class<?> clazz) {
         return Product.class.equals(clazz);
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
+    public void validate(@NonNull Object target,@NonNull Errors errors) {
         Product product = (Product) target;
 
         if (product.getName() == null || product.getName().isEmpty()) {
