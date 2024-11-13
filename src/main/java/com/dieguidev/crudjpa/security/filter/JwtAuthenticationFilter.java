@@ -1,15 +1,16 @@
 package com.dieguidev.crudjpa.security.filter;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.crypto.SecretKey;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.dieguidev.crudjpa.entities.User;
@@ -17,16 +18,18 @@ import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+// importamos las constantes de la clase TokenJwtConfig
+import static com.dieguidev.crudjpa.security.TokenJwtConfig.*;
+
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private AuthenticationManager authenticationManager;
-
-    private static final SecretKey SECRET_KEY = Jwts.SIG.HS256.key().build();
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -61,12 +64,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
             Authentication authResult) throws IOException, ServletException {
-        
+
         User user = (User) authResult.getPrincipal();
         String username = user.getUsername();
-        String token = Jwts.builder().subject(username).signWith(SECRET_KEY).compact();
+        Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
 
-        response.addHeader("Authorization", "Bearer " + token);
+        Claims claims = Jwts.claims().build();
+        claims.put("authorities", roles);
+
+        String token = Jwts.builder().subject(username).claims(claims).expiration(new Date(System.currentTimeMillis() + 360000))
+                .issuedAt(new Date())
+                .signWith(SECRET_KEY).compact();
+
+        response.addHeader(HEADER_AUTHORIZATION, PREFIX_TOKEN + token);
 
         Map<String, String> body = new HashMap<>();
         body.put("token", token);
