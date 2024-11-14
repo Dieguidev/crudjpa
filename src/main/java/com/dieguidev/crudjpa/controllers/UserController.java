@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +21,7 @@ import com.dieguidev.crudjpa.services.IUserService;
 
 import jakarta.validation.Valid;
 
+@CrossOrigin(origins = "http://localhost:4200") // Para permitir peticiones desde un cliente Angular cors
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
