@@ -39,6 +39,7 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
             throws IOException, ServletException {
         String header = request.getHeader(HEADER_AUTHORIZATION);
         if (header == null || !header.startsWith(PREFIX_TOKEN)) {
+            chain.doFilter(request, response);
             return;
         }
         String token = header.replace(PREFIX_TOKEN, "");

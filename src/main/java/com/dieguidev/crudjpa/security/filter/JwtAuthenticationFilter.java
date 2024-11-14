@@ -54,7 +54,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             e.printStackTrace();
         }
 
-        
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,
                 password);
 
@@ -72,7 +71,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
 
-        Claims claims = Jwts.claims().add("authorities", roles).add("username", username).build();
+        Claims claims = Jwts.claims().add("authorities", new ObjectMapper().writeValueAsString(roles))
+                .add("username", username).build();
 
         String token = Jwts.builder().subject(username).claims(claims)
                 .expiration(new Date(System.currentTimeMillis() + 360000))
